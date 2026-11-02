@@ -39,14 +39,14 @@
 <div id="souls"><img src="https://cdn.deadlock.wiki/Souls.png" alt="" onerror="this.remove()"><span id="soulsTxt">Души: —</span></div>
 <div class="controls">
   <button class="main" id="start">Старт (Space)</button>
-  <button id="pause">Пауза (P)</button>
+  <button id="pause" title="Пауза (P)" aria-label="Пауза">⏸</button>
   <button data-shift="-60">−1м</button>
   <button data-shift="-10">−10с</button>
   <button data-shift="-1">−1с</button>
   <button data-shift="1">+1с</button>
   <button data-shift="10">+10с</button>
   <button data-shift="60">+1м</button>
-  <button id="voice">🔊 Голос: вкл</button>
+  <button id="voice" title="Голос" aria-label="Голос вкл">🔊</button>
 </div>
 <ul id="events"></ul>
 </div>
@@ -147,7 +147,7 @@ document.addEventListener('visibilitychange', () => { if (startAt !== null && do
 
 function toggleStart() {
   if (startAt === null) { startAt = Date.now(); announced.clear(); keepAwake(); SOUNDS.letsgo ? play('letsgo') : say('Поехали'); $('start').textContent = 'Сброс (Space)'; }
-  else if (confirm('Сбросить таймер?')) { startAt = pausedAt = null; $('clock').classList.remove('paused'); $('pause').textContent = 'Пауза (P)'; wakeLock?.release(); $('start').textContent = 'Старт (Space)'; }
+  else if (confirm('Сбросить таймер?')) { startAt = pausedAt = null; $('clock').classList.remove('paused'); $('pause').textContent = '⏸'; wakeLock?.release(); $('start').textContent = 'Старт (Space)'; }
   render();
 }
 
@@ -157,7 +157,7 @@ function togglePause() {
   if (pausedAt === null) pausedAt = Date.now();
   else { startAt += Date.now() - pausedAt; pausedAt = null; }
   $('clock').classList.toggle('paused', pausedAt !== null);
-  $('pause').textContent = pausedAt === null ? 'Пауза (P)' : 'Продолжить (P)';
+  $('pause').textContent = pausedAt === null ? '⏸' : '▶';
   render();
 }
 $('pause').onclick = togglePause;
@@ -172,7 +172,7 @@ document.querySelectorAll('[data-shift]').forEach(b => b.onclick = () => {
   for (const [i, [at]] of EVENTS.entries()) if (at - now() <= 0) announced.add(i);
   render();
 });
-$('voice').onclick = () => { voice = !voice; $('voice').textContent = '🔊 Голос: ' + (voice ? 'вкл' : 'выкл'); };
+$('voice').onclick = () => { voice = !voice; $('voice').textContent = voice ? '🔊' : '🔇'; $('voice').ariaLabel = 'Голос ' + (voice ? 'вкл' : 'выкл'); };
 
 setInterval(render, 250);
 render();
